@@ -1,0 +1,65 @@
+'use strict';
+
+const DataModel = require('../models/memory.js');
+const Categories = require('../categories/categories.js');
+
+describe('Categories Model', () => {
+
+  let model;
+
+  beforeEach(() => {
+    model = new Categories();
+  });
+
+  it('creates a record', () => {
+    let obj = {'name':'bunny'};
+    let createdRecord = model.create(obj);
+    let foundRecord = model.get(createdRecord.id);
+    expect(foundRecord).toEqual(createdRecord);
+  });
+
+  it('receives a new record after a create', () => {
+    let obj = {'name':'bunny'};
+    let expected = obj.name;
+    let key = 'name';
+    let newRecord = model.create(obj);
+    expect(newRecord[key]).toEqual(expected);
+  });
+
+  // How might we repeat this to check on types?
+  it('sanitize() returns undefined with missing requirements', () => {
+    const schema = model.schema;
+    var testRecord = {};
+    for (var field in schema) {
+      if (schema[field].required) {
+        testRecord[field] = null;
+      }
+    }
+    expect(model.sanitize(testRecord)).toBeUndefined();
+  });
+
+  it('can post() a new category', () => {
+    let obj = { name: 'Test Category' };
+    return model.create(obj)
+      .then(record => {
+        Object.keys(obj).forEach(key => {
+          expect(record[key]).toEqual(obj[key]);
+        });
+      })
+      .catch(e => console.error('ERR', e));
+  });
+
+  it('can get() a category', () => {
+    let obj = { name: 'Test Category' };
+    return model.create(obj)
+      .then(record => {
+        return model.get(record._id)
+          .then(category => {
+            Object.keys(obj).forEach(key => {
+              expect(category[0][key]).toEqual(obj[key]);
+            });
+          });
+      });
+  });
+
+});
