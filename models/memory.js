@@ -5,19 +5,17 @@ const uuid = require('uuid/v4');
 class Model {
 
   constructor() {
-    this.database = [];
+    this.database = {};
   }
 
   get(id) {
-    let response = id ? this.database.filter((record) => record.id === id) : this.database;
-    return Promise.resolve(response);
+    return this.database[id];
   }
 
   create(entry) {
     entry.id = uuid();
-    let record = this.sanitize(entry);
-    if (record.id) { this.database.push(record); }
-    return Promise.resolve(record);
+    this.database[entry.id] = entry;
+    return entry;
   }
 
   update(id, entry) {

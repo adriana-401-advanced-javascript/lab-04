@@ -12,6 +12,7 @@
 eslint
 faker
 jest
+fs
 
 ##### Good use of code
 None...
